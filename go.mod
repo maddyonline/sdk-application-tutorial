@@ -3,6 +3,7 @@ module github.com/cosmos/sdk-application-tutorial
 go 1.12
 
 require (
+	firebase.google.com/go v3.9.0+incompatible
 	github.com/cosmos/cosmos-sdk v0.36.0-rc1
 	github.com/gorilla/mux v1.7.0
 	github.com/labstack/echo/v4 v4.1.10
@@ -12,7 +13,7 @@ require (
 	github.com/spf13/viper v1.3.2
 	github.com/tendermint/go-amino v0.15.0
 	github.com/tendermint/tendermint v0.32.1
-	google.golang.org/appengine v1.4.0 // indirect
-	google.golang.org/genproto v0.0.0-20190327125643-d831d65fe17d // indirect
-	google.golang.org/grpc v1.19.1 // indirect
+	golang.org/x/net v0.0.0-20190503192946-f4e77d36d62c
+	google.golang.org/api v0.9.0
+	google.golang.org/grpc v1.20.1
 )
