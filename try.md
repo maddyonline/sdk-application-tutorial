@@ -1,6 +1,10 @@
 # Try it out
 
 ```sh
+nscli rest-server --chain-id my-chain --trust-node
+```
+
+```sh
 
 nscli tx send $(nscli keys show jack --address) $(nscli keys show alice --address) 12nametoken
 
