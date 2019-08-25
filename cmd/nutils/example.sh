@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+go build
+
+./nutils uQEoKBapCkGoo2GaChQruzS1VPUrjikAv2iWpHO5RzUr4BIUT3cwf+MTKsUxgkHuXyKm/uMWx2EaDwoJbmFtZXRva2VuEgIxMhIEEMCaDBpqCibrWumHIQNcEU96rwui4Yr0RjQOXfN8t5uxtW2uO21uehUnEfpTQxJAV2rWt0U2Vj2gTzSP1iJeOAUyu2nooKZ4blLOq+HP651ZcOPnh6ALG/xRaRs8ID+dtMYsjDSmmikMoohT1U6JtQ==
