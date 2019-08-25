@@ -10,6 +10,12 @@ else
  echo "All good"
 fi
 
+# Kill existing processes
+
+lsof -ti tcp:26657 | xargs kill -9
+lsof -ti tcp:26656 | xargs kill -9
+lsof -ti tcp:1317 | xargs kill -9
+
 
 MONIKER=my-mac
 CHAIN_ID=my-chain
@@ -46,3 +52,6 @@ echo ${DEFAULT_PASSWORD} | nsd gentx --name ${USER_1}
 nsd collect-gentxs
 nsd validate-genesis
 nsd start
+
+
+

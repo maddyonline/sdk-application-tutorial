@@ -17,6 +17,11 @@ import (
 	"google.golang.org/grpc/codes"
 )
 
+const (
+	DocTransactions string = "bookkeeping/transactions"
+	DocBlocks       string = "bookkeeping/blocks"
+)
+
 type BlockBook struct {
 	Height string `json:"height"`
 }
@@ -211,7 +216,8 @@ func processSequentially(app *firebase.App) error {
 	var i int
 	for {
 		if latestHeight() < processed {
-			break
+			time.Sleep(2 * time.Second)
+			log.Printf("sleeping")
 		}
 		i++
 		processTxs(app, processed)
@@ -232,7 +238,7 @@ func updateTransactions(app *firebase.App, txhash string) error {
 		return err
 	}
 	defer client.Close()
-	bd := client.Doc("bookkeeping/transactions")
+	bd := client.Doc(DocTransactions)
 
 	// Check if document does not exist and create with new value
 	if _, err = bd.Get(ctx); err != nil && grpc.Code(err) == codes.NotFound {
@@ -252,7 +258,7 @@ func updateBookkeeping(height string, app *firebase.App) error {
 		return err
 	}
 	defer client.Close()
-	bd := client.Doc("bookkeeping/blocks")
+	bd := client.Doc(DocBlocks)
 
 	// Check if document does not exist and create with new value
 	if _, err = bd.Get(ctx); err != nil && grpc.Code(err) == codes.NotFound {
@@ -272,7 +278,7 @@ func processedSofar(app *firebase.App) (int, error) {
 		return 0, err
 	}
 	defer client.Close()
-	bd := client.Doc("bookkeeping/blocks")
+	bd := client.Doc(DocBlocks)
 	docsnap, err := bd.Get(ctx)
 	if err != nil {
 		return 0, err
@@ -314,9 +320,27 @@ func main() {
 	opt := option.WithCredentialsFile("worldcoin-dev-firebase-adminsdk.json")
 	app, err := firebase.NewApp(context.Background(), nil, opt)
 	if err != nil {
-		fmt.Errorf("error initializing app: %v", err)
-		return
+		log.Fatal(err)
 	}
-	processSequentially(app)
-
+	ctx := context.Background()
+	client, err := app.Firestore(ctx)
+	defer client.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Deleting document %s to restart from scratch", DocBlocks)
+	if _, err = client.Doc(DocBlocks).Delete(ctx); err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Recreating document %s with height set to 0", DocBlocks)
+	if err = updateBookkeeping("0", app); err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Deleting document %s to restart from scratch", DocTransactions)
+	if _, err = client.Doc(DocTransactions).Delete(ctx); err != nil {
+		log.Fatal(err)
+	}
+	if err = processSequentially(app); err != nil {
+		log.Fatal(err)
+	}
 }
